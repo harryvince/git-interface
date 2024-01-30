@@ -10,10 +10,10 @@ controller.get("/checkout/:branch", async (c) => {
 });
 
 controller.post("/asc", async (c) => {
-  const body = await c.req.formData()
-  await git.add("-A")
-  await git.commit(body.get('message') as string)
-  return c.redirect("/");
+  const body = await c.req.formData();
+  await git.add("-A");
+  await git.commit(body.get("message") as string);
+  return c.body('Success', 200, { 'HX-Redirect': '/' });
 });
 
 export default controller;
