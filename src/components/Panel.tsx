@@ -18,7 +18,7 @@ const Panel: FC<Props> = ({
 }) => {
   return (
     <div
-      class="rounded-lg border bg-card text-card-foreground shadow-sm"
+      class="rounded-lg border bg-card text-card-foreground shadow-sm flex flex-col justify-between"
       data-v0-t="card"
     >
       <div class="p-6 flex flex-row items-center justify-between pb-2 space-y-0">

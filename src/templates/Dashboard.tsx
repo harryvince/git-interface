@@ -10,6 +10,7 @@ import {
   getRelativeTimeSinceDate,
 } from "@lib/utils";
 import FileForm from "@components/FileForm";
+import Button from "@components/units/Button";
 
 const Dashboard: FC = async () => {
   const Icons = {
@@ -65,38 +66,88 @@ const Dashboard: FC = async () => {
     "transititext-primary text-xs text-primary transition duration-150 ease-in-out hover:text-primary-600 focus:text-primary-600 active:text-primary-700 dark:text-primary-400 dark:hover:text-primary-500 dark:focus:text-primary-500 dark:active:text-primary-600";
   let commitMessages: Array<JSX.Element> = [];
   const commits = (await git.log({ maxCount: 15 })).all;
-  if (commits.length > 0) {
-    commits.forEach((commit) => {
-      commitMessages.push(
-        <>
-          <a
-            class={commit_messages_class}
-            data-te-toggle="tooltip"
-            title={commit.hash}
-            href={`/commit/${commit.hash}`}
-          >
-            {commit.hash.slice(0, 7)}
-          </a>
-          : {commit.message} |{" "}
-          <small
-            class={commit_messages_class}
-            data-te-toggle="tooltip"
-            title={commit.author_email}
-          >
-            {commit.author_name}
-          </small>{" "}
-          -{" "}
-          <small
-            class={commit_messages_class}
-            data-te-toggle="tooltip"
-            title={commit.date}
-          >
-            {getRelativeTimeSinceDate(new Date(commit.date))}
-          </small>
-        </>,
-      );
+
+  const commits_to_push = (await git.log({ from: "origin/main", to: "HEAD" }))
+    .all;
+
+  const filtered_commits = commits
+    .map((commit) => {
+      let appears = false;
+      for (let index = 0; index < commits_to_push.length; index++) {
+        const element = commits_to_push[index];
+        if (element.hash === commit.hash) {
+          appears = true;
+        }
+      }
+      if (!appears) return commit;
+    })
+    .filter((item) => item) as typeof commits_to_push;
+
+  const construct_commit_message = (commit: (typeof commits_to_push)[0]) => {
+    return (
+      <>
+        <a
+          class={commit_messages_class}
+          data-te-toggle="tooltip"
+          title={commit.hash}
+          href={`/commit/${commit.hash}`}
+        >
+          {commit.hash.slice(0, 7)}
+        </a>
+        : {commit.message} |{" "}
+        <small
+          class={commit_messages_class}
+          data-te-toggle="tooltip"
+          title={commit.author_email}
+        >
+          {commit.author_name}
+        </small>{" "}
+        -{" "}
+        <small
+          class={commit_messages_class}
+          data-te-toggle="tooltip"
+          title={commit.date}
+        >
+          {getRelativeTimeSinceDate(new Date(commit.date))}
+        </small>
+      </>
+    );
+  };
+
+  if (filtered_commits.length > 0) {
+    filtered_commits.forEach((commit) => {
+      commitMessages.push(construct_commit_message(commit));
     });
   }
+
+  const produce_commits_jsx = (
+    array: typeof commits_to_push,
+    title: string,
+  ) => {
+    if (array.length > 0) {
+      return (
+        <>
+          <p class="text-base font-bold">{title}</p>
+          {array.map((item) => (
+            <p class="text-xs font-light">{construct_commit_message(item)}</p>
+          ))}
+        </>
+      );
+    }
+  };
+
+  const commits_jsx = (
+    <>
+      {produce_commits_jsx(commits_to_push, "Local Commits:")}
+      {produce_commits_jsx(filtered_commits, "Synced Commits:")}
+      <form hx-post="/api/push">
+      <div class="p-6 flex flex-row items-center justify-between pb-2 space-y-0">
+        <p />
+        <Button text="Push" type="submit" />
+      </div>
+      </form>
+    </>
+  );
 
   const files = await git.status();
   const number_of_changes =
@@ -159,7 +210,7 @@ const Dashboard: FC = async () => {
             <Panel
               title="Commits"
               svg={Icons.Commits}
-              data={commitMessages}
+              data={commits_to_push.length > 0 ? commits_jsx : commitMessages}
               reduce_data_text_size={true}
               extra_info=""
             />
