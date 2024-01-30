@@ -5,43 +5,55 @@ import Nav from "@components/Nav";
 import Panel from "@components/Panel";
 import icons from "@lib/icons";
 import { git } from "@lib/server";
-import { getRelativeTimeSinceDate } from "@lib/utils";
+import { getRelativeTimeSinceDate, get_branches_and_current } from "@lib/utils";
 
 const Commits: FC = async () => {
+  const [currentBranch, branches] = await get_branches_and_current();
+
   const commits = (await git.log()).all;
 
-  const commit_messages = commits.map((commit) => {
-    const class_attributes = "font-bold"
+  const commit_messages = (
+    <>
+      {commits.map((commit) => {
+        const class_attributes = "font-semibold";
 
-    return (
-      <>
-        <a
-          data-te-toggle="tooltip"
-          title={commit.hash}
-          href={`/commit/${commit.hash}`}
-          class={class_attributes}
-        >
-          {commit.hash.slice(0, 7)}
-        </a>
-        : {commit.message} |{" "}
-        <small
-          data-te-toggle="tooltip"
-          title={commit.author_email}
-          class={class_attributes}
-        >
-          {commit.author_name}
-        </small>{" "}
-        -{" "}
-        <small
-          data-te-toggle="tooltip"
-          title={commit.date}
-          class={class_attributes}
-        >
-          {getRelativeTimeSinceDate(new Date(commit.date))}
-        </small>
-      </>
-    );
-  });
+        return (
+          <div>
+            <a
+              data-te-toggle="tooltip"
+              title={commit.hash}
+              href={`/commit/${commit.hash}`}
+              class={class_attributes}
+            >
+              {commit.hash.slice(0, 7)}
+            </a>
+            : {commit.message} |{" "}
+            <small
+              data-te-toggle="tooltip"
+              title={commit.author_email}
+              class={class_attributes}
+            >
+              {commit.author_name}
+            </small>{" "}
+            -{" "}
+            <small
+              data-te-toggle="tooltip"
+              title={commit.date}
+              class={class_attributes}
+            >
+              {getRelativeTimeSinceDate(new Date(commit.date))}
+            </small>
+          </div>
+        );
+      })}
+      <div class="p-6 flex flex-row items-center justify-between pb-2 space-y-0">
+        <p />
+        <h3 class="whitespace-nowrap tracking-tight text-sm font-medium">
+          {currentBranch}
+        </h3>
+      </div>
+    </>
+  );
 
   return (
     <_root>
