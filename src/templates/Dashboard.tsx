@@ -99,6 +99,11 @@ const Dashboard: FC = async () => {
   }
 
   const files = await git.status();
+  const number_of_changes =
+    files.not_added.length +
+    files.modified.length +
+    files.renamed.length +
+    files.deleted.length;
   const produce_files_jsx = (array: Array<string>, title: string) => {
     if (array.length > 0) {
       return (
@@ -149,7 +154,7 @@ const Dashboard: FC = async () => {
               data={files_jsx}
               extra_info=""
             >
-              <FileForm />
+              {number_of_changes > 0 ? <FileForm /> : <></>}
             </Panel>
             <Panel
               title="Commits"
