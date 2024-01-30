@@ -1,0 +1,17 @@
+{
+  "scripts": {
+    "dev": "pnpm run --parallel /^dev:/",
+    "dev:serve": "tsx watch src/index.tsx",
+    "dev:css": "tailwindcss -i ./src/templates/app.css -o ./static/out.css --watch"
+  },
+  "dependencies": {
+    "@hono/node-server": "^1.4.1",
+    "hono": "^3.12.7",
+    "simple-git": "^3.22.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.10",
+    "tailwindcss": "^3.4.1",
+    "tsx": "^3.12.2"
+  }
+}
