@@ -37,7 +37,7 @@ const Nav: FC<{ currentlySelected: selected }> = ({ currentlySelected }) => {
         </svg>
         <span class="sr-only">Git Dashboard</span>
       </a>
-      <a class={isSelected("repository")} href="/repository">
+      <a class={isSelected("repository")} href="/">
         Repository
       </a>
       <a class={isSelected("files")}href="/files">

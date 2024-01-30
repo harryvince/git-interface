@@ -11,32 +11,9 @@ import {
 } from "@lib/utils";
 import FileForm from "@components/FileForm";
 import Button from "@components/units/Button";
+import icons from "@lib/icons";
 
 const Dashboard: FC = async () => {
-  const Icons = {
-    Repository: (
-      <path d="M4 20h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.93a2 2 0 0 1-1.66-.9l-.82-1.2A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13c0 1.1.9 2 2 2Z" />
-    ),
-    Files: (
-      <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z" />
-    ),
-    Commits: (
-      <>
-        <circle cx="12" cy="12" r="3" />
-        <line x1="3" x2="9" y1="12" y2="12" />
-        <line x1="15" x2="21" y1="12" y2="12" />
-      </>
-    ),
-    Branches: (
-      <>
-        <line x1="6" x2="6" y1="3" y2="15" />
-        <circle cx="18" cy="6" r="3" />
-        <circle cx="6" cy="18" r="3" />
-        <path d="M18 9a9 9 0 0 1-9 9" />
-      </>
-    ),
-  };
-
   // Template logic
   const [repository_folder_name, repository_path] =
     await get_repository_names();
@@ -189,19 +166,19 @@ const Dashboard: FC = async () => {
           <div class="grid gap-4 md:grid-cols-1 lg:grid-cols-2">
             <Panel
               title="Repository"
-              svg={Icons.Repository}
+              svg={icons.Repository}
               data={repository_folder_name}
               extra_info={`Path: ${repository_path}`}
             />
             <Panel
               title="Branches"
-              svg={Icons.Branches}
+              svg={icons.Branches}
               data={jsx_branches}
               extra_info={branches_message}
             />
             <Panel
               title="Files"
-              svg={Icons.Files}
+              svg={icons.Files}
               data={files_jsx}
               extra_info=""
             >
@@ -209,7 +186,7 @@ const Dashboard: FC = async () => {
             </Panel>
             <Panel
               title="Commits"
-              svg={Icons.Commits}
+              svg={icons.Commits}
               data={commits_to_push.length > 0 ? commits_jsx : commitMessages}
               reduce_data_text_size={true}
               extra_info=""
