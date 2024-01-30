@@ -40,6 +40,13 @@ const Dashboard: FC = async () => {
     await get_repository_names();
 
   const [current_branch, branches] = await get_branches_and_current();
+  const jsx_branches = branches.map((branch) => {
+    if (!branch.includes("*")) {
+      return (
+        <a class="text-base font-bold" href={`/api/checkout/${branch}`}>{branch}</a>
+      );
+    } else return branch
+  });
 
   const remote_branches = await get_branches_remote();
   // const remote_branches = ["harry", "branch", "test"];
@@ -116,7 +123,7 @@ const Dashboard: FC = async () => {
             <Panel
               title="Branches"
               svg={Icons.Branches}
-              data={branches}
+              data={jsx_branches}
               extra_info={branches_message}
             />
           </div>
