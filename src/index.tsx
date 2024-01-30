@@ -4,7 +4,7 @@ import { Hono } from "hono";
 
 import Dashboard from "@templates/Dashboard";
 
-import general from "./api/general";
+// import general from "./api/general";
 import api from "./api/api";
 
 const app = new Hono();
@@ -18,7 +18,7 @@ app.use(
   serveStatic({ root: './' })
 )
 
-app.route("/general", general);
+// app.route("/general", general);
 app.route("/api", api)
 
 const port = 3000;

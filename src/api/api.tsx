@@ -9,4 +9,11 @@ controller.get("/checkout/:branch", async (c) => {
   return c.redirect("/");
 });
 
+controller.post("/asc", async (c) => {
+  const body = await c.req.formData()
+  await git.add("-A")
+  await git.commit(body.get('message') as string)
+  return c.redirect("/");
+});
+
 export default controller;

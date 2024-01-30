@@ -3,7 +3,7 @@ import { FC } from "hono/jsx";
 type Props = {
   title: string;
   svg: JSX.Element;
-  data: string | Array<string> | Array<JSX.Element>;
+  data: string | JSX.Element | Array<string> | Array<JSX.Element>;
   reduce_data_text_size?: boolean;
   extra_info: string;
 };
@@ -14,6 +14,7 @@ const Panel: FC<Props> = ({
   data,
   extra_info,
   reduce_data_text_size,
+  children,
 }) => {
   return (
     <div
@@ -40,7 +41,7 @@ const Panel: FC<Props> = ({
         </svg>
       </div>
       <div class="p-6">
-        {typeof data === "string" ? (
+        {typeof data === "string" || !Array.isArray(data) ? (
           reduce_data_text_size ? (
             <p class="text-xs">{data}</p>
           ) : (
@@ -49,9 +50,13 @@ const Panel: FC<Props> = ({
         ) : (
           data.map((item, index: number) => {
             return reduce_data_text_size ? (
-              <p key={index} class="text-xs">{item}</p>
+              <p key={index} class="text-xs">
+                {item}
+              </p>
             ) : (
-              <div key={index} class="text-base font-bold">{item}</div>
+              <div key={index} class="text-base font-bold">
+                {item}
+              </div>
             );
           })
         )}
@@ -59,6 +64,7 @@ const Panel: FC<Props> = ({
           {extra_info}
         </p>
       </div>
+      {children && children}
     </div>
   );
 };
