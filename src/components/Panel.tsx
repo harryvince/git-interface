@@ -3,11 +3,18 @@ import { FC } from "hono/jsx";
 type Props = {
   title: string;
   svg: JSX.Element;
-  data: string | Array<string>;
+  data: string | Array<string> | Array<JSX.Element>;
+  reduce_data_text_size?: boolean;
   extra_info: string;
 };
 
-const Panel: FC<Props> = ({ title, svg, data, extra_info }) => {
+const Panel: FC<Props> = ({
+  title,
+  svg,
+  data,
+  extra_info,
+  reduce_data_text_size,
+}) => {
   return (
     <div
       class="rounded-lg border bg-card text-card-foreground shadow-sm"
@@ -34,13 +41,23 @@ const Panel: FC<Props> = ({ title, svg, data, extra_info }) => {
       </div>
       <div class="p-6">
         {typeof data === "string" ? (
-          <div class="text-base font-bold">{data}</div>
+          reduce_data_text_size ? (
+            <p class="text-xs">{data}</p>
+          ) : (
+            <div class="text-base font-bold">{data}</div>
+          )
         ) : (
-          data.map((item: string, index: number) => {
-            return <div key={index} class="text-base font-bold">{item}</div>;
+          data.map((item, index: number) => {
+            return reduce_data_text_size ? (
+              <p key={index} class="text-xs">{item}</p>
+            ) : (
+              <div key={index} class="text-base font-bold">{item}</div>
+            );
           })
         )}
-        <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">{extra_info}</p>
+        <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
+          {extra_info}
+        </p>
       </div>
     </div>
   );

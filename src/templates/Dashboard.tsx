@@ -7,6 +7,7 @@ import {
   get_branches_and_current,
   get_branches_remote,
   get_repository_names,
+  getRelativeTimeSinceDate,
 } from "@lib/utils";
 
 const Dashboard: FC = async () => {
@@ -50,7 +51,40 @@ const Dashboard: FC = async () => {
     branches_message = branches_message.slice(0, -2);
   } else branches_message = "";
 
-  const commits = await git.log();
+  let commitMessages: Array<JSX.Element> = [];
+  const commits = (await git.log({ maxCount: 15 })).all;
+  if (commits.length > 0) {
+    commits.forEach((commit) => {
+      commitMessages.push(
+        <>
+          <a
+            class="transititext-primary text-xs text-primary transition duration-150 ease-in-out hover:text-primary-600 focus:text-primary-600 active:text-primary-700 dark:text-primary-400 dark:hover:text-primary-500 dark:focus:text-primary-500 dark:active:text-primary-600"
+            data-te-toggle="tooltip"
+            title={commit.hash}
+            href={`/commit/${commit.hash}`}
+          >
+            {commit.hash.slice(0, 7)}
+          </a>
+          : {commit.message} |{" "}
+          <small
+            class="transititext-primary text-xs text-primary transition duration-150 ease-in-out hover:text-primary-600 focus:text-primary-600 active:text-primary-700 dark:text-primary-400 dark:hover:text-primary-500 dark:focus:text-primary-500 dark:active:text-primary-600"
+            data-te-toggle="tooltip"
+            title={commit.author_email}
+          >
+            {commit.author_name}
+          </small>{" "}
+          -{" "}
+          <small
+            class="transititext-primary text-xs text-primary transition duration-150 ease-in-out hover:text-primary-600 focus:text-primary-600 active:text-primary-700 dark:text-primary-400 dark:hover:text-primary-500 dark:focus:text-primary-500 dark:active:text-primary-600"
+            data-te-toggle="tooltip"
+            title={commit.date}
+          >
+            {getRelativeTimeSinceDate(new Date(commit.date))}
+          </small>
+        </>,
+      );
+    });
+  }
 
   return (
     <_root>
@@ -59,7 +93,6 @@ const Dashboard: FC = async () => {
           <Nav currentlySelected="repository" />
         </header>
         <main class="flex min-h-[calc(100vh_-_theme(spacing.16))] flex-1 flex-col gap-4 p-4 md:gap-8 md:p-10">
-        {JSON.stringify(commits)}
           <div class="grid gap-4 md:grid-cols-3 lg:grid-cols-3">
             <Panel
               title="Repository"
@@ -76,7 +109,8 @@ const Dashboard: FC = async () => {
             <Panel
               title="Commits"
               svg={Icons.Commits}
-              data="Commit 1"
+              data={commitMessages}
+              reduce_data_text_size={true}
               extra_info=""
             />
             <Panel
